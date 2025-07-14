@@ -1,90 +1,54 @@
 // Инициализация Telegram WebApp
-if (window.Telegram && Telegram.WebApp) {
+if (window.Telegram?.WebApp) {
   const tg = Telegram.WebApp;
-  tg.expand(); // Растянуть на весь экран
-  tg.enableClosingConfirmation(); // Подтверждение закрытия
-  tg.setHeaderColor('#26a69a');
-  tg.setBackgroundColor('#e0f7fa');
+  tg.expand();
+  tg.setBackgroundColor('#181818');
 }
 
-let timer;
-let seconds = 0;
-let currentPractice = null;
-
-const practices = {
-  square: {
-    steps: ["Вдох", "Задержка", "Выдох", "Пауза"],
-    durations: [4, 4, 4, 4]
-  },
-  wimhof: {
-    steps: ["Глубокий вдох", "Задержка"],
-    durations: [2, 10]
-  }
+const practice = {
+  steps: ["Вдох", "Задержка", "Выдох", "Пауза"],
+  durations: [4, 4, 4, 4]
 };
 
-function startPractice(type) {
-  console.log("Запуск практики:", type);
-  
-  if (!practices[type]) {
-    alert("Ошибка: неизвестный тип практики");
-    return;
-  }
+let currentStep = 0;
+let isRunning = false;
 
-  currentPractice = practices[type];
-  seconds = 0;
-  updateTimer();
-  animateBreathing(0);
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('main-screen').classList.add('hidden');
+  document.getElementById('practice-screen').classList.remove('hidden');
+  startPractice();
+});
+
+function startPractice() {
+  if (isRunning) return;
+  isRunning = true;
+  animateBreath();
 }
 
-function animateBreathing(stepIndex) {
-  if (!currentPractice || stepIndex >= currentPractice.steps.length) {
-    document.getElementById("instruction").textContent = "Практика завершена!";
-    clearInterval(timer);
-    return;
+function animateBreath() {
+  if (currentStep >= practice.steps.length) {
+    currentStep = 0;
   }
 
-  const step = currentPractice.steps[stepIndex];
-  const duration = currentPractice.durations[stepIndex] * 1000;
+  const circle = document.getElementById('breath-circle');
+  const instruction = document.getElementById('instruction');
+  const step = practice.steps[currentStep];
+  const duration = practice.durations[currentStep] * 1000;
 
-  document.getElementById("instruction").textContent = step;
-  
-  // Анимация круга + вибрация
-  const circle = document.getElementById("breath-circle");
-  if (step.includes("Вдох")) {
+  instruction.textContent = step;
+
+  // Анимация круга
+  if (step === "Вдох") {
     circle.style.transform = "scale(1.5)";
-    vibrate(200);
+    circle.style.borderColor = "#8B008B";
   } else if (step === "Выдох") {
     circle.style.transform = "scale(1)";
-    vibrate(100);
-  } else if (step === "Задержка") {
-    vibrate([100, 200, 100]);
+    circle.style.borderColor = "#4B0082";
   }
 
+  currentStep++;
+  
   setTimeout(() => {
-    animateBreathing(stepIndex + 1);
+    animateBreath();
   }, duration);
 }
-
-function updateTimer() {
-  clearInterval(timer);
-  timer = setInterval(() => {
-    seconds++;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    document.getElementById("timer").textContent = 
-      `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }, 1000);
-}
-
-function vibrate(pattern) {
-  if (navigator.vibrate) {
-    navigator.vibrate(pattern);
-  } else {
-    console.log("Вибрация не поддерживается");
-  }
-}
-
-// Для iOS: вибрация только после клика
-document.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => vibrate(50));
-});
