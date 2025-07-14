@@ -7,7 +7,7 @@ if (window.Telegram?.WebApp) {
 
 const practice = {
   steps: ["Вдох", "Задержка", "Выдох", "Пауза"],
-  durations: [4, 4, 4, 4] // В секундах
+  durations: [4, 7, 8, 2] // В секундах
 };
 
 let currentStep = 0;
