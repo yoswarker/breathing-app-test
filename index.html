@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дыхательные практики 🌬️</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="frame-src 'self' https://telegram.org;">
+  <title>Дыхательные практики 🌬️</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🌿 Дыхательные практики</h1>
-        
-        <div class="practice-card" id="square-breathing">
-            <h2>Квадратное дыхание</h2>
-            <p>4 сек вдох → 4 сек задержка → 4 сек выдох → 4 сек пауза</p>
-            <button onclick="startPractice('square')">Начать</button>
-        </div>
-        
-        <div class="practice-card" id="wim-hof">
-            <h2>Метод Вима Хофа</h2>
-            <p>30 глубоких вдохов → задержка → повтор</p>
-            <button onclick="startPractice('wimhof')">Начать</button>
-        </div>
-        
-        <div class="animation-container">
-            <div class="circle" id="breath-circle"></div>
-            <p id="instruction">Нажмите "Начать" для старта</p>
-            <p id="timer">00:00</p>
-        </div>
+  <div class="container">
+    <h1>🌿 Дыхательные практики</h1>
+    
+    <div class="practice-card" id="square-breathing">
+      <h2>Квадратное дыхание</h2>
+      <p>4 сек вдох → 4 сек задержка → 4 сек выдох → 4 сек пауза</p>
+      <button onclick="startPractice('square')">Начать</button>
     </div>
     
-    <script src="script.js"></script>
+    <div class="practice-card" id="wim-hof">
+      <h2>Метод Вима Хофа</h2>
+      <p>30 глубоких вдохов → задержка → повтор</p>
+      <button onclick="startPractice('wimhof')">Начать</button>
+    </div>
+    
+    <div class="animation-container">
+      <div class="circle" id="breath-circle"></div>
+      <p id="instruction">Нажмите "Начать" для старта</p>
+      <p id="timer">00:00</p>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
 </body>
 </html>
