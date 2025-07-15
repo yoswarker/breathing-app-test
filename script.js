@@ -5,20 +5,69 @@ if (window.Telegram?.WebApp) {
   tg.setBackgroundColor('#181818');
 }
 
-const practice = {
-  steps: ["Вдох", "Задержка", "Выдох", "Пауза"],
-  durations: [4, 7, 8, 2] // В секундах
+// Режимы дыхания
+const modes = {
+  standard: {
+    steps: ["Вдох", "Задержка", "Выдох", "Пауза"],
+    durations: [4, 7, 8, 2],
+    scales: {
+      "Вдох": [1, 1.4],
+      "Задержка": [1.4, 1.4],
+      "Выдох": [1.4, 1],
+      "Пауза": [1, 1]
+    }
+  },
+  sleep: {
+    steps: ["Медленный вдох", "Задержка", "Плавный выдох"],
+    durations: [6, 2, 8],
+    scales: {
+      "Медленный вдох": [1, 1.4],
+      "Задержка": [1.4, 1.4],
+      "Плавный выдох": [1.4, 1]
+    }
+  },
+  antistress: {
+    steps: ["Глубокий вдох", "Быстрый выдох"],
+    durations: [5, 3],
+    scales: {
+      "Глубокий вдох": [1, 1.4],
+      "Быстрый выдох": [1.4, 1]
+    }
+  }
 };
 
+let currentMode = 'standard';
+let practice = JSON.parse(JSON.stringify(modes.standard));
 let currentStep = 0;
 let isRunning = false;
 let animationFrame;
 let startTime;
-let scale = 1;
 let countdownInterval;
 
-document.getElementById('start-btn').addEventListener('click', startCountdown);
-document.getElementById('stop-btn').addEventListener('click', stopPractice);
+// Элементы интерфейса
+const menuBtn = document.getElementById('menu-btn');
+const menu = document.getElementById('menu');
+const startBtn = document.getElementById('start-btn');
+const stopBtn = document.getElementById('stop-btn');
+
+// Инициализация
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    currentMode = item.dataset.mode;
+    document.querySelector('.menu-item.active').classList.remove('active');
+    item.classList.add('active');
+    document.body.className = `${currentMode}-mode`;
+    resetPractice();
+    menu.classList.remove('active');
+  });
+});
+
+menuBtn.addEventListener('click', () => {
+  menu.classList.toggle('active');
+});
+
+startBtn.addEventListener('click', startCountdown);
+stopBtn.addEventListener('click', stopPractice);
 
 function startCountdown() {
   document.getElementById('main-screen').classList.add('hidden');
@@ -27,16 +76,16 @@ function startCountdown() {
   let count = 3;
   const countdownElement = document.getElementById('countdown');
   countdownElement.classList.remove('hidden');
-  countdownElement.textContent = `Приготовьтесь: ${count}`;
+  countdownElement.textContent = count;
   
   countdownInterval = setInterval(() => {
     count--;
-    countdownElement.textContent = `Приготовьтесь: ${count}`;
+    countdownElement.textContent = count;
     
     if (count <= 0) {
       clearInterval(countdownInterval);
       countdownElement.classList.add('hidden');
-      document.getElementById('stop-btn').classList.remove('hidden');
+      stopBtn.classList.remove('hidden');
       startPractice();
     }
   }, 1000);
@@ -47,7 +96,6 @@ function startPractice() {
   
   isRunning = true;
   currentStep = 0;
-  scale = 1;
   startTime = null;
   
   const circle = document.getElementById('breath-circle');
@@ -58,26 +106,23 @@ function startPractice() {
 }
 
 function stopPractice() {
-  // 1. Остановка всех анимаций
+  isRunning = false;
   cancelAnimationFrame(animationFrame);
   clearInterval(countdownInterval);
   
-  // 2. Полный сброс состояния
-  isRunning = false;
-  currentStep = 0;
-  scale = 1;
-  startTime = null;
-  
-  // 3. Сброс визуальных элементов
   const circle = document.getElementById('breath-circle');
   circle.style.transform = "scale(1)";
   document.getElementById('instruction').textContent = "";
   document.getElementById('countdown').classList.add('hidden');
-  document.getElementById('stop-btn').classList.add('hidden');
+  stopBtn.classList.add('hidden');
   
-  // 4. Возврат на главный экран
   document.getElementById('main-screen').classList.remove('hidden');
   document.getElementById('practice-screen').classList.add('hidden');
+}
+
+function resetPractice() {
+  stopPractice();
+  practice = JSON.parse(JSON.stringify(modes[currentMode]));
 }
 
 function animateBreath(timestamp) {
@@ -94,20 +139,12 @@ function animateBreath(timestamp) {
   
   instruction.textContent = step;
 
-  // Анимация масштабирования
-  switch(step) {
-    case "Вдох":
-      scale = 1 + 0.5 * progress;
-      break;
-    case "Выдох":
-      scale = 1.5 - 0.5 * progress;
-      break;
-    default:
-      // Задержка и пауза без изменений масштаба
-      break;
-  }
+  // 1. ВЫЧИСЛЕНИЕ ТЕКУЩЕГО МАСШТАБА (ЗДЕСЬ МЕНЯЕТСЯ РАЗМЕР)
+  const [startScale, endScale] = practice.scales[step];
+  const currentScale = startScale + (endScale - startScale) * progress;
   
-  circle.style.transform = `scale(${scale})`;
+  // 2. ПРИМЕНЕНИЕ МАСШТАБА К КРУГУ
+  circle.style.transform = `scale(${currentScale})`;
 
   if (progress >= 1) {
     startTime = null;
@@ -116,3 +153,6 @@ function animateBreath(timestamp) {
   
   animationFrame = requestAnimationFrame(animateBreath);
 }
+
+// Сброс при загрузке
+window.addEventListener('load', resetPractice);
