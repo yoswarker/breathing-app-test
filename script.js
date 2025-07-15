@@ -123,6 +123,8 @@ function stopPractice() {
 function resetPractice() {
   stopPractice();
   practice = JSON.parse(JSON.stringify(modes[currentMode]));
+  playEffect("Смена режима"); // Звук при смене режима
+  document.body.className = `${currentMode}-mode`;
 }
 
 function animateBreath(timestamp) {
@@ -153,6 +155,104 @@ function animateBreath(timestamp) {
   
   animationFrame = requestAnimationFrame(animateBreath);
 }
+const sounds = {
+  inhale: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-single-breath-in-1230.mp3'),
+  exhale: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-breath-out-1231.mp3'),
+  transition: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3')
+};
+
+// Проверка поддержки вибрации
+const canVibrate = 'vibrate' in navigator;
+
+function playEffect(step) {
+  try {
+    // Вибрация (на мобильных устройствах)
+    if (canVibrate) {
+      switch(step) {
+        case "Вдох":
+        case "Медленный вдох":
+        case "Глубокий вдох":
+          navigator.vibrate(200);
+          break;
+        case "Выдох":
+        case "Плавный выдох":
+        case "Быстрый выдох":
+          navigator.vibrate(100);
+          break;
+        case "Задержка":
+          navigator.vibrate([100, 50, 100]);
+          break;
+      }
+    }
+
+    // Звуковые эффекты
+    if (sounds.inhale && sounds.exhale) {
+      switch(step) {
+        case "Вдох":
+        case "Медленный вдох":
+        case "Глубокий вдох":
+          sounds.inhale.currentTime = 0;
+          sounds.inhale.play();
+          break;
+        case "Выдох":
+        case "Плавный выдох":
+        case "Быстрый выдох":
+          sounds.exhale.currentTime = 0;
+          sounds.exhale.play();
+          break;
+        case "Смена режима":
+          sounds.transition.currentTime = 0;
+          sounds.transition.play();
+          break;
+      }
+    }
+  } catch (e) {
+    console.log("Ошибка воспроизведения:", e);
+  }
+}
+
+// Обновлённая функция animateBreath()
+function animateBreath(timestamp) {
+  if (!isRunning) return;
+  
+  if (!startTime) {
+    startTime = timestamp;
+    playEffect(practice.steps[currentStep]); // Воспроизводим звук при начале фазы
+  }
+  
+  const elapsed = (timestamp - startTime) / 1000;
+  const duration = practice.durations[currentStep];
+  const progress = Math.min(elapsed / duration, 1);
+  
+  const circle = document.getElementById('breath-circle');
+  const instruction = document.getElementById('instruction');
+  const step = practice.steps[currentStep];
+  
+  instruction.textContent = step;
+
+  const [startScale, endScale] = practice.scales[step];
+  const currentScale = startScale + (endScale - startScale) * progress;
+  circle.style.transform = `scale(${currentScale})`;
+
+  if (progress >= 1) {
+    startTime = null;
+    currentStep = (currentStep + 1) % practice.steps.length;
+    playEffect(practice.steps[currentStep]); // Звук следующей фазы
+  }
+  
+  animationFrame = requestAnimationFrame(animateBreath);
+}
+
+// Управление звуком
+let soundEnabled = true;
+const soundToggle = document.createElement('div');
+soundToggle.className = 'sound-toggle';
+document.body.appendChild(soundToggle);
+
+soundToggle.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  soundToggle.classList.toggle('muted');
+});
 
 // Сброс при загрузке
 window.addEventListener('load', resetPractice);
