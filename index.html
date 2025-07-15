@@ -7,15 +7,35 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-<body>
+<body class="standard-mode">
+  <div class="menu-btn" id="menu-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <div class="menu" id="menu">
+    <div class="menu-item active" data-mode="standard">Стандарт</div>
+    <div class="menu-item" data-mode="sleep">Сон</div>
+    <div class="menu-item" data-mode="antistress">Антистресс</div>
+  </div>
+
   <div class="container">
     <div id="main-screen">
+      <div class="circle-container">
+        <div class="breath-circle start-circle">
+          <div id="start-countdown" class="hidden">3</div>
+        </div>
+      </div>
       <button id="start-btn">НАЧАТЬ</button>
     </div>
     
     <div id="practice-screen" class="hidden">
-      <div id="countdown" class="hidden">Приготовьтесь: 3</div>
-      <div class="breath-circle" id="breath-circle"></div>
+      <div class="circle-container">
+        <div class="breath-circle" id="breath-circle">
+          <div id="countdown" class="hidden">3</div>
+        </div>
+      </div>
       <p id="instruction"></p>
       <button id="stop-btn" class="hidden">ОСТАНОВИТЬ</button>
     </div>
