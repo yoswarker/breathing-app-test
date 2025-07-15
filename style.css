@@ -3,12 +3,26 @@ body {
   padding: 0;
   background-color: #181818;
   color: white;
-  font-family: 'Arial Black', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   overflow: hidden;
+  transition: background-color 0.3s;
+}
+
+/* Стили режимов */
+.standard-mode {
+  --main-color: #8B008B;
+}
+
+.sleep-mode {
+  --main-color: #6A5ACD;
+}
+
+.antistress-mode {
+  --main-color: #FF6347;
 }
 
 .container {
@@ -22,61 +36,128 @@ body {
   display: none !important;
 }
 
-#start-btn {
-  background: transparent;
-  color: #8B008B;
-  border: 2px solid #8B008B;
-  padding: 15px 40px;
-  font-size: 18px;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-family: 'Arial Black';
-  letter-spacing: 1px;
-}
-
-#start-btn:hover {
-  background: #8B008B;
-  color: white;
+.circle-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 40px;
 }
 
 .breath-circle {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background: transparent;
-  border: 3px solid #8B008B;
-  margin: 40px auto 20px;
-  transform: scale(1);
+  border: 3px solid var(--main-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* transition: transform 0.5s ease-in-out; */
 }
 
-#instruction {
-  margin-top: 30px;
-  color: #8B008B;
-  font-size: 20px;
-  min-height: 24px;
+/* .sleep-mode .breath-circle {
+  transition: transform 0.5s ease-in-out;
+} */
+
+/* .antistress-mode .breath-circle {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+} */
+
+#countdown, #start-countdown {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+}
+
+#start-btn {
+  background: var(--main-color);
+  color: white;
+  border: none;
+  padding: 9px 10px;
+  font-size: 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  /* width: 80%; */
+  max-width: 200px;
+  transition: background 0.3s;
 }
 
 #stop-btn {
   background: transparent;
-  color: #8B008B;
-  border: 2px solid #8B008B;
-  padding: 10px 30px;
+  color: white;
+  border: 2px solid var(--main-color);
+  padding: 12px 30px;
   font-size: 16px;
   border-radius: 30px;
   cursor: pointer;
-  margin-top: 30px;
-  font-family: 'Arial Black';
-  letter-spacing: 1px;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
 #stop-btn:hover {
-  background: #8B008B;
-  color: white;
+  background: var(--main-color);
 }
 
-#countdown {
-  font-size: 24px;
-  color: #8B008B;
-  margin-bottom: 20px;
+/* Меню */
+.menu-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 30px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.menu-btn span {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: white;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 200px;
+  height: 100%;
+  background: #181818;
+  border-right: 1px solid var(--main-color);
+  padding: 60px 20px;
+  z-index: 99;
+  transition: left 0.3s;
+  font-weight: bold;
+}
+
+.menu.active {
+  left: 0;
+}
+
+.menu-item {
+  color: white;
+  padding: 15px 0;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.menu-item:hover, .menu-item.active {
+  color: var(--main-color);
+  font-weight: bold;
+}
+
+#instruction {
+  margin-top: 20px;
+  color: white;
+  font-size: 20px;
+  min-height: 24px;
+  font-weight: bold;
 }
