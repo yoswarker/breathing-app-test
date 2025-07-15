@@ -161,3 +161,19 @@ body {
   min-height: 24px;
   font-weight: bold;
 }
+
+.sound-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background: url('sound-on-icon.svg') no-repeat center;
+  background-size: contain;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.sound-toggle.muted {
+  background-image: url('sound-off-icon.svg');
+}
